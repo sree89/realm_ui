@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--    <meta name="viewport" content="width=device-width; initial-scale = 1.0; maximum-scale=1.0; user-scalable=no;">-->
+    
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Login</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://apis.google.com/js/client.js?"></script>
+	<script src='https://www.gstatic.com/firebasejs/3.0.3/firebase.js'></script>
+    <script type="text/javascript" src="//platform.linkedin.com/in.js">
+    api_key: 816jyy180g7jv7
+	authorize:true 
+</script>
+
+<script type="text/javascript">
+
+    function onLinkedInLoad() {
+        IN.UI.Authorize().place();
+        IN.Event.on(IN, "auth", function () { onLogin(); });
+    }
+
+    function onLogin() {
+
+        IN.API.Profile("me").fields("first-name", "last-name", "email-address", "id", "headline", "siteStandardProfileRequest").result(displayResult);
+    }
+    function displayResult(resp) {
+        var phn = document.getElementById("phno").value;
+        postuser(resp.values[0].firstName, resp.values[0].lastName, resp.values[0].emailAddress, phn, "linkedin", "", "");
+         login();
+    }  
+</script>
+<script>
+
+    function fb_login() {
+        FB.login(function (response) {
+
+            if (response.authResponse) {
+                FB.api('/me?fields=first_name,last_name,email,birthday,gender,age_range', function (response) {
+                    var ph = document.getElementById("phno").value;
+                    postuser(response.first_name, response.last_name, response.email, ph, "fb", response.gender, response.age_range.min);
+                  login();
+
+                });
+
+            } else {
+                //user hit cancel button
+                console.log('User cancelled login or did not fully authorize.');
+
+            }
+        }, {
+                scope: 'public_profile,email'
+            });
+    }
+
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+
+        } else if (response.status === 'not_authorized') {
+
+        } else {
+
+        }
+    }
+
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
+
+    }
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '215702545516041',
+            cookie: true,  // enable cookies to allow the server to access 
+            // the session
+            xfbml: true,  // parse social plugins on this page
+            version: 'v2.5' // use graph api version 2.5
+        });
+
+
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
+
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    } (document, 'script', 'facebook-jssdk'));
+
+</script>
+
+</head>
+<body onload="add()"class="img-resposive" ng-app = "myApp">
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content" id="content">
+        <img id="adimg">
+        <span class="close" style="display:none;"><img src="images/cancel.png" height="30px" width="30px"></span>
+
+</div>
+
+</div>
+<!-- end of modal -->
+
+<div class="container xs-12">
+
+    <div class="row new">
+        <div class="col-md-12">
+            <div class="bg col-md-6" id="bg">
+<div class="lgimg">
+    <img src="images/realm.png"/> </div>
+
+<div class="row new">
+<div class="col-sm-8 col-sm-offset-2">
+<form style="width:100%;">
+<div class="form-group" id="mobileDiv">
+    <input type="tel" class="form-control m" placeholder="Enter Mobile Number" id="phno"><br/>
+    <button type="button" class="btn btn-info btn-block btn-md" onclick="fadeOutDiv('tel')">Get OTP </button>
+</div>
+</form>
+</div>
+<!-- end of columns-->
+
+</div>
+<!-- end of row-->
+
+<div class="row new " >
+    <div class="col-sm-8 col-sm-offset-2">
+        <form class="otp">
+            <div class="form-group f1 noneDisplay mm" id="otpDiv">
+                <input type="tel" class="form-control m" placeholder="Enter OTP" id="userotp"><br/>
+                <button type="button" class="btn btn-info btn-block btn-md" onclick="fadeOutDiv('otp')"> SUBMIT </button>
+</div>
+</form>
+
+</div>
+<!-- end of columns-->
+
+</div>
+<!-- end of row-->
+
+
+
+<div class="row new">
+    <div class="col-sm-8 col-sm-offset-2">
+    <div class="form-group f1 noneDisplay mm1" id="emailDiv">
+            <form class="details">
+           <div class="row">
+            <div class="col-lg-12 col-xs-12 clearfix">
+                <input type="text" class=" col-md-6 m1 pull-left" placeholder="First Name" id="firstname">
+                <input type="text" class="col-lg-6 col-md-6 m1 pull-right" placeholder="Last Name" id="lastname">
+            </div>
+        </div>
+        <br>
+
+        <input type="email" class="form-control m" placeholder="Enter Email ID" id="uemail"><br>
+         <button type="button" class="btn btn-info btn-block btn-md" onclick="fadeOutDiv('email')"> SUBMIT </button>
+
+</form>
+<br/>
+
+<p id=separator>--OR--</p>
+
+<div id="logos">
+    <div class="col-md-12">
+        <ul class="list-group">
+            <li class="list-group-item col-lg-2 col-lg-offset-3 col-md-2 col-md-offset-3 col-sm-2 col-sm-offset-3 col-xs-2 col-xs-offset-3">
+                <a id="fb" onclick="fb_login()"><img src="images/facebook.png" height="50px" width="50px" /></a>
+</li>
+<li class="list-group-item  col-lg-2 col-md-2 col-sm-2 col-xs-2">
+    <a id="linkedin" onclick="onLinkedInLoad()"><img src="images/linkedin.png" height="50px" width="50px" /></a>
+</li>
+<li class="list-group-item  col-lg-2 col-md-2 col-sm-2 col-xs-2">
+    <a id="signinButton"><img src="images/google.png" height="50px" width="50px" /> </a>
+</li>
+<!--<li class="list-group-item">
+    <a href="https://twitter.com/login?lang=en"><img src="images/twitter.png" height="50px" width="50px" /></a>
+</li>
+<li class="list-group-item">
+    <a href="https://www.instagram.com/oauth/authorize/?client_id=8d635d05e2964ccca0c4c0faba4c88e6&redirect_uri=http://voicegate.laurelsolutions.net/&response_type=token"
+        onclick="this.href = this.href.replace('[sub]',window.location)"><img src="images/instagram.png" height="50px" width="50px" /></a>
+</li>-->
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<!-- end of columns-->
+
+</div>
+<!-- end of row-->
+
+
+
+</div>
+</div>
+</div>
+
+
+<div class="row new">
+    <div class="col-lg-6 col-lg-offset-3 col-xs-12">
+        <form>
+            <div id="welcomeDiv" class="screenCenter f1 noneDisplay">
+                <h1 class="form-control">Welcome</h1>
+            </div>
+        </form>
+    </div>
+    <!-- end of cols-->
+</div>
+<!-- end of row -->
+<form name="login" id="login" action="$(link-login-only)" method="post">
+    <input style="width: 80px" name="username" type="hidden" value="lucky"/>
+<input style="width: 80px" name="password" type="hidden" value="laks5347"/>
+</form>
+<!-- end of container-->
+</div>
+
+<!-- bootstrap files -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+<script src="OTP.js"></script>
+
+</body>
+
+</html>
